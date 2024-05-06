@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import {
   SignInController,
   SignOutController,
@@ -11,6 +11,6 @@ router.post("/signup", SignUpController);
 
 router.post("/signin", SignInController);
 
-router.post("/signout", SignOutController);
+router.get("/signout", SignOutController);
 
 export default router;

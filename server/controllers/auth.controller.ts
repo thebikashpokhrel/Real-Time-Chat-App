@@ -101,14 +101,19 @@ export const SignInController = async (
       expiresIn: "2d",
     });
 
-    response.cookie("chat-app-user-token", token, {
+    response.cookie("chatAppUserToken", token, {
       maxAge: 10 * 24 * 60 * 60 * 1000, //Miliseconds
       httpOnly: true,
-      sameSite: "strict",
     });
 
-    return response.status(500).json({
-      user: existingUser,
+    return response.status(200).json({
+      user: {
+        firstname: existingUser.firstname,
+        lastname: existingUser.lastname,
+        email: existingUser.email,
+        username: existingUser.email,
+        userId: existingUser._id,
+      },
       message: "Signed in Successfully",
     });
   } catch (error) {
@@ -119,9 +124,20 @@ export const SignInController = async (
   }
 };
 
-export const SignOutController = async (
-  request: Request,
-  response: Response
-) => {
-  console.log("hello world");
+export const SignOutController = (request: Request, response: Response) => {
+  const token = request.cookies.chatAppUserToken;
+
+  if (!token) {
+    return response.status(400).json({
+      error: "User token missing",
+    });
+  }
+
+  response.cookie("chatAppUserToken", "", {
+    maxAge: 0,
+  });
+
+  return response.status(200).json({
+    message: "Signed Out Successfully",
+  });
 };
