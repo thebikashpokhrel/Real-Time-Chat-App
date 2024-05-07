@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import { dbConnect } from "./database/dbConfig";
 import cookieParser from "cookie-parser";
 import messageRoutes from "./routes/message.routes";
+import friendRoutes from "./routes/friend.routes";
+
 dotenv.config();
 
 const app = express();
@@ -18,6 +20,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/friend", friendRoutes);
 
 app.listen(PORT, () => {
   dbConnect();
