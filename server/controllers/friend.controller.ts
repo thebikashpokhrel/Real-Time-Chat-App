@@ -10,28 +10,13 @@ export const AddFriendCController = async (
     const loggedInUserId = request.loggedInUser._id;
     const friendId = request.body.userId;
 
-    let loggedInUser = undefined;
-    let friendUser = undefined;
-
-    if (loggedInUserId == friendId) {
+    if (loggedInUserId.equals(friendId)) {
       return response.status(400).json({
         error: "Cannot send friend request to ownself",
       });
     }
 
-    await Promise.all([
-      User.findById(loggedInUserId),
-      User.findById(friendId),
-    ]).then((users) => {
-      loggedInUser = users[0];
-      friendUser = users[1];
-    });
-
-    if (!loggedInUser) {
-      return response.status(400).json({
-        error: "Unauthorized request - Logged in user not found",
-      });
-    }
+    const friendUser = await User.findById(friendId);
 
     if (!friendUser) {
       return response.status(400).json({
@@ -39,10 +24,14 @@ export const AddFriendCController = async (
       });
     }
 
-    let existingFriendRequest1 = undefined;
-    let existingFriendRequest2 = undefined;
+    const alreadyFriend = friendUser.friends.indexOf(loggedInUserId) > -1;
+    if (alreadyFriend) {
+      return response.status(200).json({
+        error: "Already friend with this user",
+      });
+    }
 
-    await Promise.all([
+    const existingRequests = await Promise.all([
       FriendRequest.findOne({
         senderId: loggedInUserId,
         receiverId: friendId,
@@ -51,12 +40,9 @@ export const AddFriendCController = async (
         senderId: friendId,
         receiverId: loggedInUserId,
       }),
-    ]).then((requests) => {
-      existingFriendRequest1 = requests[0];
-      existingFriendRequest2 = requests[1];
-    });
+    ]);
 
-    if (existingFriendRequest1 || existingFriendRequest2) {
+    if (existingRequests[0] || existingRequests[1]) {
       return response.status(200).json({
         error: "There is an existing friend request with this user",
       });
@@ -70,7 +56,7 @@ export const AddFriendCController = async (
 
     if (!newFriendRequest) {
       return response.status(400).json({
-        error: "Error occured while sending friendrequest",
+        error: "Error occured while sending friend request",
       });
     }
 
@@ -103,19 +89,21 @@ export const AcceptFriendController = async (
     const senderId = pendingFriendRequest.senderId;
     const recieverId = pendingFriendRequest.receiverId;
 
-    if (recieverId == accepterId) {
+    if (senderId.equals(accepterId)) {
       return response.status(500).json({
         error: "Sender cannot accept their own sent request",
       });
     }
 
-    const users = await Promise.all([
-      User.findById(senderId),
-      User.findById(recieverId),
-    ]);
+    console.log(recieverId, accepterId);
+    if (!recieverId.equals(accepterId)) {
+      return response.status(500).json({
+        error: "Unauthorized request",
+      });
+    }
 
-    const sender = users[0];
-    const receiver = users[1];
+    const sender = await User.findById(senderId);
+    const receiver = request.loggedInUser;
 
     if (!sender || !receiver) {
       return response.status(500).json({
