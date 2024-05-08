@@ -15,6 +15,6 @@ router.post("/acceptfriend", authenticate, AcceptFriendController);
 
 router.get("/:id", authenticate, GetFriendsController);
 
-router.get("/removefriend/:id", authenticate, RemoveFriendController);
+router.post("/removefriend/:id", authenticate, RemoveFriendController);
 
 export default router;

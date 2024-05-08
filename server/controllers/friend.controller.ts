@@ -131,9 +131,78 @@ export const AcceptFriendController = async (
 export const GetFriendsController = async (
   request: Request,
   response: Response
-) => {};
+) => {
+  try {
+    const userId = request.params.id;
+
+    const user = await User.findById(userId).populate(
+      "friends",
+      "-password -friends"
+    );
+    if (!user) {
+      return response.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    const friends = user.friends;
+    return response.status(400).json({
+      friends,
+    });
+  } catch (error) {
+    return response.status(500).json({
+      error: "Internal server error",
+    });
+  }
+};
 
 export const RemoveFriendController = async (
   request: Request,
   response: Response
-) => {};
+) => {
+  try {
+    const userId = request.params.id;
+    const loggedInUserId = request.loggedInUser._id;
+
+    if (loggedInUserId.equals(userId)) {
+      return response.status(400).json({
+        error: "Invalid request",
+      });
+    }
+
+    const isFriend = request.loggedInUser.friends.some(
+      (friend: any) => friend.toString() == userId
+    );
+
+    if (!isFriend) {
+      return response.status(400).json({
+        error:
+          "Invalid request - Requested user is not friend with loggedin user",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return response.status(400).json({
+        error: "User not found",
+      });
+    }
+
+    const loggedInUser = request.loggedInUser;
+    loggedInUser.friends = loggedInUser.friends.filter(
+      (friend: any) => friend.toString() != userId
+    );
+    user.friends = user.friends.filter(
+      (friend: any) => !loggedInUserId.equals(friend)
+    );
+
+    await Promise.all([loggedInUser.save(), user.save()]);
+    return response.status(200).json({
+      message: "Friend removed successfully",
+    });
+  } catch (error) {
+    return response.status(500).json({
+      error: "Internal server error",
+    });
+  }
+};
