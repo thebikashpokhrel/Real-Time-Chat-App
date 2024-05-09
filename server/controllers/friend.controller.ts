@@ -192,6 +192,7 @@ export const RemoveFriendController = async (
     loggedInUser.friends = loggedInUser.friends.filter(
       (friend: any) => friend.toString() != userId
     );
+
     user.friends = user.friends.filter(
       (friend: any) => !loggedInUserId.equals(friend)
     );
