@@ -74,7 +74,7 @@ export const SignInController = async (
 
     const { email, password } = validatedSignInData.data;
 
-    const existingUser = await User.findOne({ email }).select("-password");
+    const existingUser = await User.findOne({ email });
     if (!existingUser) {
       return response.status(400).json({
         error: "User with given email doesn't exist",
@@ -107,7 +107,7 @@ export const SignInController = async (
     });
 
     return response.status(200).json({
-      user: existingUser,
+      user: { ...existingUser, password: undefined },
       message: "Signed in Successfully",
     });
   } catch (error) {

@@ -8,11 +8,44 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { SignInSchema, SignInType } from "../../../shared/schemas/user.schema";
+import { useSignInMutation } from "@/services/auth.services";
+import toast, { Toaster } from "react-hot-toast";
 
 export function SignInPage() {
+  const [signInData, setSignInData] = useState<SignInType>({
+    email: "",
+    password: "",
+  });
+
+  const { mutate } = useSignInMutation({
+    sucessFn: (response) => {
+      toast.dismiss();
+      toast.success(response.data.message);
+    },
+    errorFn: (response) => {
+      toast.dismiss();
+      toast.error(response.error);
+    },
+  });
+
+  const handleSignIn = () => {
+    const validatedSignInData = SignInSchema.safeParse(signInData);
+
+    if (!validatedSignInData.success) {
+      const errors = validatedSignInData.error?.issues;
+      toast.dismiss();
+      toast.error(errors[0].message);
+    } else {
+      mutate(validatedSignInData.data as SignInType);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-[100vh]">
+      <Toaster />
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -26,9 +59,15 @@ export function SignInPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                type="email"
+                type="text"
                 placeholder="m@example.com"
-                required
+                value={signInData.email}
+                onChange={(e) => {
+                  setSignInData((prev) => ({
+                    ...prev,
+                    email: e.target.value,
+                  }));
+                }}
               />
             </div>
             <div className="grid gap-2">
@@ -42,10 +81,16 @@ export function SignInPage() {
                 id="password"
                 type="password"
                 placeholder="password"
-                required
+                value={signInData.password}
+                onChange={(e) => {
+                  setSignInData((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }));
+                }}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" onClick={handleSignIn}>
               Sign In
             </Button>
           </div>
