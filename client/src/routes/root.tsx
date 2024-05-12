@@ -9,7 +9,6 @@ export default function RootPage() {
         <Button asChild className="bg-primary font-bold">
           <Link to="/signin">Sign In</Link>
         </Button>
-
         <Button asChild className="bg-primary font-bold">
           <Link to="/signup">Sign Up</Link>
         </Button>
