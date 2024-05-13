@@ -23,6 +23,7 @@ export function SignUpPage() {
     email: "",
     username: "",
   });
+
   const { mutate } = useSignUpMutation({
     sucessFn: (response) => {
       toast.dismiss();
