@@ -5,12 +5,16 @@ import { dbConnect } from "./database/dbConfig";
 import cookieParser from "cookie-parser";
 import messageRoutes from "./routes/message.routes";
 import friendRoutes from "./routes/friend.routes";
+import cors from 'cors'
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 5000;
-
+const allowedOrigins =["http://localhost:3000"]
+app.use(cors({
+  origin:allowedOrigins
+}))
 app.use(express.json());
 app.use(cookieParser());
 
