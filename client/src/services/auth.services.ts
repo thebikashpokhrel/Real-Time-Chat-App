@@ -10,7 +10,7 @@ export type APIErrorMessage = {
   error: string;
 };
 
-const AUTH_API_URL = "api/auth";
+const AUTH_API_URL = "http://localhost:8000/api/auth";
 
 const AUTH_API_ENDPOINTS = {
   signUp: AUTH_API_URL + "/signup",
