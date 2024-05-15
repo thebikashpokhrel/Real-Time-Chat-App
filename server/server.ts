@@ -19,6 +19,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+
 const allowedOrigins = ["http://localhost:5173"];
 app.use(
   cors({
@@ -27,7 +28,7 @@ app.use(
 );
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("hello world");
+  res.send("API Root");
 });
 
 app.use("/api/auth", authRoutes);
@@ -36,5 +37,6 @@ app.use("/api/friend", friendRoutes);
 
 app.listen(PORT, () => {
   dbConnect();
+
   console.log(`Server Started at ${PORT}`);
 });

@@ -23,7 +23,7 @@ export const authenticate = async function (
       });
     }
 
-    const userId = tokenPayload?.userId;
+    const userId = tokenPayload.userId;
 
     const user = await User.findById(userId).select("-password");
     if (!user) {
