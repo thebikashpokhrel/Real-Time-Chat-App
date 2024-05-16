@@ -12,7 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import toast, { Toaster } from "react-hot-toast";
 import { useState } from "react";
-import { SignUpSchema, SignUpType } from "../../../shared/schemas/user.schema";
+import {
+  SignUpSchema,
+  SignUpType,
+} from "../../../../shared/schemas/user.schema";
 import { useSignUpMutation } from "@/services/auth.services";
 
 export function SignUpPage() {

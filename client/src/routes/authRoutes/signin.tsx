@@ -9,8 +9,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { SignInSchema, SignInType } from "../../../shared/schemas/user.schema";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  SignInSchema,
+  SignInType,
+} from "../../../../shared/schemas/user.schema";
 import { useSignInMutation } from "@/services/auth.services";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -20,10 +23,12 @@ export function SignInPage() {
     password: "",
   });
 
+  const navigate = useNavigate();
+
   const { mutate } = useSignInMutation({
     sucessFn: (response) => {
       toast.dismiss();
-      toast.success(response.data.message);
+      navigate("/");
     },
     errorFn: (response) => {
       toast.dismiss();
