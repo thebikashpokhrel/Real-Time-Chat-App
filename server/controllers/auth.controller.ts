@@ -119,14 +119,6 @@ export const SignInController = async (
 };
 
 export const SignOutController = (request: Request, response: Response) => {
-  const token = request.cookies.chatAppUserToken;
-
-  if (!token) {
-    return response.status(400).json({
-      error: "User token missing",
-    });
-  }
-
   response.cookie("chatAppUserToken", "", {
     maxAge: 0,
   });
