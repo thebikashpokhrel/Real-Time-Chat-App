@@ -10,7 +10,7 @@ export default function ErrorPage() {
         <h1 className="text-xl">{error.statusText || error.message}</h1>
       </div>
       <Link className="mt-4 text-primary" to="/">
-        Go to Home
+        Go to Home Page
       </Link>
     </div>
   );
