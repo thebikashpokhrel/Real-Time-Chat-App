@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   SignInSchema,
@@ -18,6 +18,10 @@ import { useSignInMutation } from "@/services/auth.services";
 import toast, { Toaster } from "react-hot-toast";
 
 export function SignInPage() {
+  useEffect(() => {
+    console.log(document.cookie);
+  }, []);
+
   const [signInData, setSignInData] = useState<SignInType>({
     email: "",
     password: "",
@@ -25,7 +29,7 @@ export function SignInPage() {
 
   const navigate = useNavigate();
 
-  const { mutate } = useSignInMutation({
+  const { mutate: signInMutate } = useSignInMutation({
     sucessFn: (response) => {
       toast.dismiss();
       navigate("/");
@@ -44,7 +48,7 @@ export function SignInPage() {
       toast.dismiss();
       toast.error(errors[0].message);
     } else {
-      mutate(validatedSignInData.data as SignInType);
+      signInMutate(validatedSignInData.data as SignInType);
     }
   };
 
